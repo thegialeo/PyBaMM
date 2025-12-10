@@ -110,23 +110,23 @@ class TestConcatenations:
         assert conc.scale == 1
         assert conc.reference == 0
 
-        a._scale = 2
+        a.scale = 2
         with pytest.raises(
             ValueError, match="Cannot concatenate symbols with different scales"
         ):
             pybamm.concatenation(a, b)
 
-        b._scale = 2
+        b.scale = 2
         conc = pybamm.concatenation(a, b)
         assert conc.scale == 2
 
-        a._reference = 3
+        a.reference = 3
         with pytest.raises(
             ValueError, match="Cannot concatenate symbols with different references"
         ):
             pybamm.concatenation(a, b)
 
-        b._reference = 3
+        b.reference = 3
         conc = pybamm.concatenation(a, b)
         assert conc.reference == 3
 

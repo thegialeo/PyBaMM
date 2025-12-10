@@ -1078,9 +1078,8 @@ class Discretisation:
             old_y_slices = self.y_slices.copy()
             for child in symbol.children:
                 child_no_scale = child.create_copy()
-                child_no_scale._scale = 1
-                child_no_scale._reference = 0
-                child_no_scale.set_id()
+                child_no_scale.scale = 1
+                child_no_scale.reference = 0
                 self.y_slices[child_no_scale] = self.y_slices[child]
                 new_children.append(self.process_symbol(child_no_scale))
             self.y_slices = old_y_slices
@@ -1269,7 +1268,6 @@ class Discretisation:
                     # in variables twice under different names
                     for key in model.variables:
                         if model.variables[key] == var:
-                            print("here")
                             model.variables[key] = model.variables[var.name]
                     del model.rhs[var]
                     del model.initial_conditions[var]

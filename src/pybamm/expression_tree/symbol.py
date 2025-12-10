@@ -227,7 +227,7 @@ class Symbol:
         domains: DomainsType = None,
     ):
         super().__init__()
-        self.name = name
+        self._name = name
 
         if children is None:
             children = []
@@ -247,13 +247,10 @@ class Symbol:
 
         # Test shape on everything but nodes that contain the base Symbol class or
         # the base BinaryOperator class
-        if pybamm.settings.debug_mode is True:
-            if not any(
-                issubclass(pybamm.Symbol, type(x))
-                or issubclass(pybamm.BinaryOperator, type(x))
-                for x in self.pre_order()
-            ):
-                self.test_shape()
+        if pybamm.settings.debug_mode is True and not any(
+            isinstance(x, (Symbol | pybamm.BinaryOperator)) for x in self.pre_order()
+        ):
+            self.test_shape()
 
     @classmethod
     def _from_json(cls, snippet: dict):
@@ -291,6 +288,7 @@ class Symbol:
         if not isinstance(value, str):
             raise TypeError(f"{value} must be of type str")
         self._name = value
+        self.set_id()
 
     @property
     def domains(self):
@@ -457,12 +455,22 @@ class Symbol:
         )
 
     @property
-    def scale(self):
+    def scale(self) -> float | pybamm.Symbol:
         return self._scale
 
+    @scale.setter
+    def scale(self, scale: float | pybamm.Symbol):
+        self._scale = scale
+        self.set_id()
+
     @property
-    def reference(self):
+    def reference(self) -> float | pybamm.Symbol:
         return self._reference
+
+    @reference.setter
+    def reference(self, reference: float | pybamm.Symbol):
+        self._reference = reference
+        self.set_id()
 
     def __eq__(self, other):
         try:
