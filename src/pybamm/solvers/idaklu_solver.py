@@ -1,4 +1,5 @@
 # mypy: ignore-errors
+import logging
 import math
 import numbers
 import warnings
@@ -611,6 +612,9 @@ class IDAKLUSolver(pybamm.BaseSolver):
         atol = self._check_atol_type(atol, model)
 
         timer = pybamm.Timer()
+        logger = (
+            pybamm.logger.debug if pybamm.logger.isEnabledFor(logging.DEBUG) else None
+        )
         try:
             solns = self._setup["solver"].solve(
                 t_eval,
@@ -618,6 +622,7 @@ class IDAKLUSolver(pybamm.BaseSolver):
                 y0full,
                 ydot0full,
                 inputs,
+                logger=logger,
             )
         except ValueError as e:
             # Return from None to replace the C++ runtime error
